@@ -5,6 +5,7 @@ using UnityEngine;
 public class Snake : MonoBehaviour
 {
     [SerializeField] private List<SnakeBody> m_Bodies;
+    [SerializeField] private CameraShake m_CamShake;
 
     private Vector2 m_NextStep;
     private MapLocator m_MapLocator;
@@ -15,7 +16,7 @@ public class Snake : MonoBehaviour
     private void Start()
     {
         m_NextStep = Vector2.up;
-        InvokeRepeating("MoveForward", 2.0f, 0.2f);
+        InvokeRepeating("MoveForward", 1.2f, 0.1f);
         //m_Bodies[0].m_CoordProperty = new Vector2Int(0, 0);
 
         m_MapLocator = MapLocator.instance;
@@ -37,7 +38,8 @@ public class Snake : MonoBehaviour
             return;
 
         Vector2Int headNext= m_Bodies[0].m_CoordProperty + Vector2Int.RoundToInt(m_NextStep);
-        CheckAbyss(headNext);
+        if (CheckAbyss(headNext))
+            return;
         CheckItems(headNext);
 
         for (int i = m_Bodies.Count - 1; i > 0; i--)
@@ -48,7 +50,7 @@ public class Snake : MonoBehaviour
             if(bumpIntoBody)
             {
                 Debug.Log("GameOver! Bump Into Body!");
-                PauseMoving();
+                Die("GameOver! Bump Into Body!");
             }
 
             CheckAbyss(m_Bodies[i].m_CoordProperty);
@@ -60,17 +62,19 @@ public class Snake : MonoBehaviour
         m_StepUpdated = false;
     }
 
-    private void CheckAbyss(Vector2Int coord)
+    private bool CheckAbyss(Vector2Int coord)
     {
         Item item = m_MapLocator.FindItem(coord);
         if (item == null)
-            return;
+            return false;
 
         if(item.m_Type == CollectableType.ABYSS)
         {
             Debug.Log("GameOver! Bumped into Abyss!");
-            PauseMoving();
+            Die("GameOver! Bumped into Abyss!");
+            return true;
         }
+        return false;
     }
 
     private void CheckItems(Vector2Int headCoord)
@@ -86,19 +90,21 @@ public class Snake : MonoBehaviour
             case CollectableType.EXPAND:
                 GameObject tail = Instantiate(head, head.transform.parent);
                 m_Bodies.Add(tail.GetComponent<SnakeBody>());
+                AudioManager.instance.Play("FruitCollect");
                 break;
             case CollectableType.SHRINK:
+                AudioManager.instance.Play("BadFruitCollect");
                 bool onlyOneBodyLeft = m_Bodies.Count < 2;
                 if (onlyOneBodyLeft)
                 {
                     Debug.Log("GameOver! Nothing Left!");
-                    PauseMoving();
+                    Die("GameOver! Nothing Left!");
                 }
                 else
                 {
                     SnakeBody tailBody = m_Bodies[m_Bodies.Count - 1];
                     m_Bodies.RemoveAt(m_Bodies.Count - 1);
-                    Destroy(tailBody.gameObject); // Game object?
+                    Destroy(tailBody.gameObject);
                 }
                 break;
         }
@@ -125,5 +131,11 @@ public class Snake : MonoBehaviour
             m_NextStep = (m_Vertical > 0f) ? Vector2.up : Vector2.down;
             m_StepUpdated = true;
         }
+    }
+
+    public void Die(string alarm)
+    {
+        PauseMoving();
+        StartCoroutine(m_CamShake.Shake(.15f, .2f));
     }
 }

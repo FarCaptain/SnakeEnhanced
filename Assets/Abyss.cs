@@ -6,10 +6,15 @@ public class Abyss : Item
 {
     public Vector2Int m_MoveSpeed;
 
-    private void Start()
+    private void OnEnable()
     {
         if(m_MoveSpeed != Vector2Int.zero)
-            InvokeRepeating("Move", 0.1f, 0.2f);
+            InvokeRepeating("Move", 0.1f, 0.3f);
+    }
+
+    private void OnDisable()
+    {
+        CancelInvoke();
     }
 
     private void Move()

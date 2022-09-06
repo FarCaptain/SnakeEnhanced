@@ -69,9 +69,9 @@ public class ItemSpawner : MonoBehaviour
 
     public void SpawnAbyss(Vector2Int bottomLeft, Vector2Int topRight, Vector2Int speed = default)
     {
-        for (int i = bottomLeft.x; i < topRight.x; i++)
+        for (int i = bottomLeft.x; i <= topRight.x; i++)
         {
-            for (int j = bottomLeft.y; j < topRight.y; j++)
+            for (int j = bottomLeft.y; j <= topRight.y; j++)
             {
                 Vector2Int pos = new Vector2Int(i, j);
                 Item old = m_MapLocator.FindItem(pos);
