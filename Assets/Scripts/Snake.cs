@@ -11,18 +11,16 @@ public class Snake : MonoBehaviour
     [SerializeField] private Text m_EndText; 
 
     private Vector2 m_NextStep;
-    private MapLocator m_MapLocator;
 
     private bool m_StepUpdated = false;
     private bool m_isMoving = true;
+
 
     private void Start()
     {
         m_NextStep = Vector2.up;
         InvokeRepeating("MoveForward", 1.2f, 0.25f);
         //m_Bodies[0].m_CoordProperty = new Vector2Int(0, 0);
-
-        m_MapLocator = MapLocator.instance;
     }
 
     public void PauseMoving()
@@ -67,7 +65,7 @@ public class Snake : MonoBehaviour
 
     private bool CheckAbyss(Vector2Int coord)
     {
-        Item item = m_MapLocator.FindItem(coord);
+        Item item = MapLocator.instance.FindItem(coord);
         if (item == null)
             return false;
 
@@ -82,7 +80,7 @@ public class Snake : MonoBehaviour
 
     private void CheckItems(Vector2Int headCoord)
     {
-        Item item = m_MapLocator.FindItem(headCoord);
+        Item item = MapLocator.instance.FindItem(headCoord);
         if (item == null)
             return;
 
@@ -111,7 +109,7 @@ public class Snake : MonoBehaviour
                 }
                 break;
         }
-        m_MapLocator.RemoveItem(item.m_CoordProperty);
+        MapLocator.instance.RemoveItem(item.m_CoordProperty);
         item.gameObject.SetActive(false);
     }
 

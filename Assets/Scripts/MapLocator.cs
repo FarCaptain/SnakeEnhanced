@@ -29,7 +29,7 @@ public class MapLocator : MonoBehaviour
         else
         {
             instance = this;
-            DontDestroyOnLoad(this);
+            //DontDestroyOnLoad(this);
         }
 
         width = m_TopRightAnchor.position.x - m_BottomLeftAnchor.position.x;
