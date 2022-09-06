@@ -24,7 +24,7 @@ public class AbyssFightingSequence : MonoBehaviour
         funcs.Add(SpawnTopAbyss());
         funcs.Add(SpawnBottomAbyss());
 
-        Invoke("StartSequence", 2f);
+        Invoke("StartSequence", 5f);
     }
 
     // Hard Code 48 x 27
@@ -107,7 +107,7 @@ public class AbyssFightingSequence : MonoBehaviour
 
         int index = Random.Range(0, funcs.Count);
         float waitTime = Random.Range(5.0f, 15.0f);
-        yield return new WaitForSeconds(waitTime);
+        //yield return new WaitForSeconds(waitTime);
         yield return StartCoroutine(funcs[index]);
     }
 

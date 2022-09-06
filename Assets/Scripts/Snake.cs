@@ -9,6 +9,7 @@ public class Snake : MonoBehaviour
     [SerializeField] private CameraShake m_CamShake;
     [SerializeField] private GameObject m_EndScreen;
     [SerializeField] private Text m_EndText; 
+    [SerializeField] private Text m_ScoreText; 
 
     private Vector2 m_NextStep;
 
@@ -139,6 +140,8 @@ public class Snake : MonoBehaviour
         AudioManager.instance.Play("Die");
         PauseMoving();
         StartCoroutine(m_CamShake.Shake(.15f, .2f));
+
+        m_ScoreText.text = "Score:" + m_Bodies.Count;
 
         m_EndText.text = alarm;
         m_EndScreen.SetActive(true);
