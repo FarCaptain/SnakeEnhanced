@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Snake : MonoBehaviour
 {
     [SerializeField] private List<SnakeBody> m_Bodies;
     [SerializeField] private CameraShake m_CamShake;
+    [SerializeField] private GameObject m_EndScreen;
+    [SerializeField] private Text m_EndText; 
 
     private Vector2 m_NextStep;
     private MapLocator m_MapLocator;
@@ -16,7 +19,7 @@ public class Snake : MonoBehaviour
     private void Start()
     {
         m_NextStep = Vector2.up;
-        InvokeRepeating("MoveForward", 1.2f, 0.1f);
+        InvokeRepeating("MoveForward", 1.2f, 0.25f);
         //m_Bodies[0].m_CoordProperty = new Vector2Int(0, 0);
 
         m_MapLocator = MapLocator.instance;
@@ -135,7 +138,11 @@ public class Snake : MonoBehaviour
 
     public void Die(string alarm)
     {
+        AudioManager.instance.Play("Die");
         PauseMoving();
         StartCoroutine(m_CamShake.Shake(.15f, .2f));
+
+        m_EndText.text = alarm;
+        m_EndScreen.SetActive(true);
     }
 }

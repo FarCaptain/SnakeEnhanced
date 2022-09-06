@@ -102,12 +102,4 @@ public class ItemSpawner : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SpawnAbyss(m_ButtomLeft, m_TopRight, new Vector2Int(1, 1));
-        }
-    }
-
 }
