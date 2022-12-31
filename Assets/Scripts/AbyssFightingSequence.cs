@@ -15,16 +15,18 @@ public class AbyssFightingSequence : MonoBehaviour
     [SerializeField] private int fightCount = 6;
 
     private int speed;
-    private List<IEnumerator> funcs = new List<IEnumerator>();
+    private List<string> funcs = new List<string>();
+    private float accumulatedTime = 0f;
+    private bool startTimer = false;
 
     private void Start()
     {
-        funcs.Add(SpawnLeftAbyss());
-        funcs.Add(SpawnRightAbyss());
-        funcs.Add(SpawnTopAbyss());
-        funcs.Add(SpawnBottomAbyss());
+        funcs.Add("SpawnLeftAbyss");
+        funcs.Add("SpawnRightAbyss");
+        funcs.Add("SpawnTopAbyss");
+        funcs.Add("SpawnBottomAbyss");
 
-        Invoke("StartSequence", 5f);
+        Invoke("StartSequence", 7f);
     }
 
     // Hard Code 48 x 27
@@ -41,7 +43,7 @@ public class AbyssFightingSequence : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         m_ItemSpawner.SpawnAbyss(new Vector2Int(0, 0), new Vector2Int(0, 26), new Vector2Int(speed, 0));
 
-        yield return StartCoroutine(StopAbyss());
+        yield return null;
     }
 
     IEnumerator SpawnRightAbyss()
@@ -58,7 +60,7 @@ public class AbyssFightingSequence : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         m_ItemSpawner.SpawnAbyss(new Vector2Int(47, 0), new Vector2Int(47, 26), new Vector2Int(-speed, 0));
 
-        yield return StartCoroutine(StopAbyss());
+        yield return null;
     }
 
     IEnumerator SpawnTopAbyss()
@@ -74,7 +76,7 @@ public class AbyssFightingSequence : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         m_ItemSpawner.SpawnAbyss(new Vector2Int(0, 26), new Vector2Int(47, 26), new Vector2Int(0, -speed));
 
-        yield return StartCoroutine(StopAbyss());
+        yield return null;
     }
 
     IEnumerator SpawnBottomAbyss()
@@ -89,12 +91,12 @@ public class AbyssFightingSequence : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         m_ItemSpawner.SpawnAbyss(new Vector2Int(0, 0), new Vector2Int(47, 0), new Vector2Int(0, speed));
 
-        yield return StartCoroutine(StopAbyss());
+        yield return null;
     }
 
     IEnumerator StopAbyss()
     {
-        yield return new WaitForSeconds(10f);
+        //yield return new WaitForSeconds(10f);
         Debug.Log("StopAbyss!");
 
         m_WarningFrame.SetActive(false);
@@ -107,7 +109,8 @@ public class AbyssFightingSequence : MonoBehaviour
 
         int index = Random.Range(0, funcs.Count);
         float waitTime = Random.Range(5.0f, 15.0f);
-        //yield return new WaitForSeconds(waitTime);
+        //yield return new WaitForSeconds(waitTime);funcs[index]
+
         yield return StartCoroutine(funcs[index]);
     }
 
@@ -122,9 +125,21 @@ public class AbyssFightingSequence : MonoBehaviour
 
         int index = Random.Range(0, funcs.Count);
         float waitTime = Random.Range(20.0f, 25.0f);
-
+        startTimer = true;
         yield return StartCoroutine(funcs[index]);
     }
 
-
+    private void Update()
+    {
+        if(startTimer)
+        {
+            accumulatedTime += Time.deltaTime;
+            if(accumulatedTime >= 18.5f)
+            {
+                StopAllCoroutines();
+                StartCoroutine(StopAbyss());
+                accumulatedTime = 0f;
+            }
+        }
+    }
 }
